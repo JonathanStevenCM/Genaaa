@@ -8,20 +8,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import com.stevproject2.LiterAlura.model.SubjectCategorizer;
 
-// @Entity
-// @Table(name = "libros")
+@Entity
+@Table(name = "libros")
 public class LibroCont {
-    // @Id
+    @Id
     private Integer id;
-    // @Column(unique = true)
+    @Column(unique = true)
     private String title;
     private List<DatosPerson> autor = new ArrayList<>();
-    private List<Categoria> categoria;
+    @Enumerated(EnumType.STRING)
+    private Categoria categoria;;
     private List<String> idioma;
     private int descargas;
 
@@ -30,7 +33,7 @@ public class LibroCont {
         this.id = datosLibroCont.id();
         this.title = datosLibroCont.title();
         this.autor = datosLibroCont.autor();
-        this.categoria = SubjectCategorizer.categorizeSubjects( datosLibroCont.categoria());
+        this.categoria = SubjectCategorizer.categorizeSubjects(datosLibroCont.categoria());
         this.idioma = datosLibroCont.idioma();
         this.descargas = datosLibroCont.descargas();
     }
@@ -71,7 +74,7 @@ public class LibroCont {
 
 
 
-    public List<Categoria> getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 

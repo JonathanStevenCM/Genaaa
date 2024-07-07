@@ -26,11 +26,13 @@ public class SubjectCategorizer {
         }
     }
 
-    public static List<Categoria> categorizeSubjects(List<String> subjects) {
-        List<Categoria> categories = new ArrayList<>();
+    public static Categoria categorizeSubjects(List<String> subjects) {
         for (String subject : subjects) {
-            categories.add(categorize(subject));
+            Categoria category = categorize(subject);
+            if (category != Categoria.DESCONOCIDO) {
+                return category;
+            }
         }
-        return categories;
+        return Categoria.DESCONOCIDO;
     }
 }
