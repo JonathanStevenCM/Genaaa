@@ -9,9 +9,4 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record DatosLibro1(@JsonAlias("results") List<DatosLibroCont> resultado) {
 
-    public Object stream() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stream'");
-    }
-
 }
