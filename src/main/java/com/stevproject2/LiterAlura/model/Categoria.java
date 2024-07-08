@@ -1,13 +1,13 @@
 package com.stevproject2.LiterAlura.model;
 
 public enum Categoria {
-    ACCION,
+    HISTORIA,
     AMOR,
-    TRISTEZA,
+    POESIA,
     AVENTURA,
     DRAMA,
     ROMANCE,
-    COMEDIA,
+    COMEDIAS,
     FICCION,
     DESCONOCIDO; // Para los casos que no se ajusten a ninguna categoría
 }

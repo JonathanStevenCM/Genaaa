@@ -65,8 +65,6 @@ public class Principal {
                     case 5:
                         listarLibrosPorIdioma();
                         break;
-                    case 6:
-                        listarLibrosWeb();
                     case 0:
                         System.out.println("Cerrando la aplicación...");
                         break;
@@ -94,7 +92,7 @@ public class Principal {
             return datos;
         }
 
-        private void listarLibrosWeb() {
+        private void buscarLibroPorTítulo() {
             DatosLibro1 datos = getDatosLibro1();
             List<DatosLibro1> datosLibros = new ArrayList<>();
             datosLibros.add(datos);
@@ -103,19 +101,13 @@ public class Principal {
             libro = datosLibros.stream().map(d -> new Libro1(d)).collect(Collectors.toList());
             System.out.println(libro);
             List<LibroCont> libroCont = new ArrayList<>();
-            libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont(l)).collect(Collectors.toList());
+            libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont()).collect(Collectors.toList());
             System.out.println(libroCont);
             Optional<LibroCont> libroCont2 = libroCont.stream().map(l -> new LibroCont(l.getId(), l.getTitle(), l.getAutor(), l.getCategoria(), l.getIdioma(), l.getDescargas())).findFirst();
             System.out.println(libroCont2);
             LibroCont libroCont3 = libroCont2.orElse(new LibroCont());
             System.out.println(libroCont3);
             repositorio.save(libroCont3);
-
-        }
-
-
-        private void buscarLibroPorTítulo() {
-
         }
 
         private void listarLibrosRegistrados() {

@@ -8,16 +8,16 @@ public class SubjectCategorizer {
             return Categoria.AVENTURA;
         } else if (subject.toLowerCase().contains("love")) {
             return Categoria.AMOR;
-        } else if (subject.toLowerCase().contains("sadness")) {
-            return Categoria.TRISTEZA;
-        } else if (subject.toLowerCase().contains("action")) {
-            return Categoria.ACCION;
+        } else if (subject.toLowerCase().contains("poetry")) {
+            return Categoria.POESIA;
+        } else if (subject.toLowerCase().contains("history")) {
+            return Categoria.HISTORIA;
         } else if (subject.toLowerCase().contains("drama")) {
             return Categoria.DRAMA;
-        } else if (subject.toLowerCase().contains("romance")) {
+        } else if (subject.toLowerCase().contains("romances")) {
             return Categoria.ROMANCE;
         } else if (subject.toLowerCase().contains("comedies")) {
-            return Categoria.COMEDIA;
+            return Categoria.COMEDIAS;
         } else if (subject.toLowerCase().contains("fiction")) {
             return Categoria.FICCION;
         } else {
