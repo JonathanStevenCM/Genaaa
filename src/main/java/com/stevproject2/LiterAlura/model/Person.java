@@ -1,10 +1,8 @@
 package com.stevproject2.LiterAlura.model;
 
-
-
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -15,31 +13,44 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "personas")
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID UUID;
-    
-
-    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long UUID;
     private String autor;
     private Integer fechaDeNacimiento;
     private String fechaDeSuMuerte;
 
-    @ManyToMany(mappedBy = "autores")
-    private List<LibroCont> libros;
+    @ManyToOne()
+    private LibroCont libros;
+
+
+    public Person(){}
+    
+    public Person(String autor, Integer fechaDeNacimiento, String fechaDeSuMuerte){
+        this.autor = autor;
+        this.fechaDeNacimiento = fechaDeNacimiento;
+        this.fechaDeSuMuerte = fechaDeSuMuerte;
+    }
+
+
+    public static Person conversorPerson(List<Person> persona){
+        return (Person) persona.stream().map(l -> new Person(l.getAutor(), l.getFechaDeNacimiento(),l.getFechaDeSuMuerte()));
+    }
 
 
 
-    public List<LibroCont> getLibros() {
+    public LibroCont getLibros() {
         return libros;
     }
 
-    public void setLibros(List<LibroCont> libros) {
+    public void setLibros(LibroCont libros) {
         this.libros = libros;
     }
 
@@ -49,11 +60,11 @@ public class Person {
         this.fechaDeSuMuerte = datosPerson.fechaDeSuMuerte();
     }
 
-    public UUID getUUID() {
+    public Long getUUID() {
         return UUID;
     }
 
-    public void setUUID(UUID uUID) {
+    public void setUUID(Long uUID) {
         UUID = uUID;
     }
 

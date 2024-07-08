@@ -1,6 +1,5 @@
 package com.stevproject2.LiterAlura.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SubjectCategorizer {
@@ -17,7 +16,7 @@ public class SubjectCategorizer {
             return Categoria.DRAMA;
         } else if (subject.toLowerCase().contains("romance")) {
             return Categoria.ROMANCE;
-        } else if (subject.toLowerCase().contains("comedy")) {
+        } else if (subject.toLowerCase().contains("comedies")) {
             return Categoria.COMEDIA;
         } else if (subject.toLowerCase().contains("fiction")) {
             return Categoria.FICCION;

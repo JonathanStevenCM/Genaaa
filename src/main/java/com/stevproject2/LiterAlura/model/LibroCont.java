@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.stevproject2.LiterAlura.model.SubjectCategorizer;
@@ -25,38 +27,52 @@ import com.stevproject2.LiterAlura.model.SubjectCategorizer;
 @Table(name = "libros")
 public class LibroCont {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID UUID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long UUID;
     @Column(unique = true)
     private String title;
-    private List<DatosPerson> autor = new ArrayList<>();
+    @OneToMany(mappedBy = "libros", cascade = CascadeType.ALL)
+    private List<Person> autor ;
     @Enumerated(EnumType.STRING)
     private Categoria categoria;;
     private List<String> idioma;
     private int descargas;
+    
+    
+    // private List<Person> autores;
 
-    @ManyToMany
-    @JoinTable(
-        name = "libros_autores",
-        joinColumns = @JoinColumn(name = "libroscont_UUID"),
-        inverseJoinColumns = @JoinColumn(name = "person_UUID")
-    )
-    List<Person> autores;
+    // public List<Person> getAutores() {
+    //     return autores;
+    // }
 
+    // public void setAutores(List<Person> autores) {
+    //     this.autores = autores;
+    // }
+
+    public LibroCont(){}
+
+    public LibroCont(Long UUID, String title, List<Person> autor, Categoria categoria, List<String> idioma, int descargas){
+        this.UUID = UUID;
+        this.title = title;
+        this.autor = autor;
+        this.categoria = categoria;
+        this.idioma = idioma;
+        this.descargas = descargas;
+    }
 
     public LibroCont(DatosLibroCont datosLibroCont) {
         this.title = datosLibroCont.title();
-        this.autor = datosLibroCont.autor();
+        this.autor = PersonConversor.convertToPerson(datosLibroCont.autor());
         this.categoria = SubjectCategorizer.categorizeSubjects(datosLibroCont.categoria());
         this.idioma = datosLibroCont.idioma();
         this.descargas = datosLibroCont.descargas();
     }
 
-    public UUID getId() {
+    public Long getId() {
         return UUID;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.UUID = id;
     }
 
@@ -68,11 +84,11 @@ public class LibroCont {
         this.title = title;
     }
 
-    public List<DatosPerson> getAutor() {
+    public List<Person> getAutor() {
         return autor;
     }
 
-    public void setAutor(List<DatosPerson> autor) {
+    public void setAutor(List<Person> autor) {
         this.autor = autor;
     }
 
@@ -99,7 +115,7 @@ public class LibroCont {
     public void setDescargas(int descargas) {
         this.descargas = descargas;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -110,7 +126,6 @@ public class LibroCont {
         result = prime * result + ((categoria == null) ? 0 : categoria.hashCode());
         result = prime * result + ((idioma == null) ? 0 : idioma.hashCode());
         result = prime * result + descargas;
-        result = prime * result + ((autores == null) ? 0 : autores.hashCode());
         return result;
     }
 
@@ -147,17 +162,12 @@ public class LibroCont {
             return false;
         if (descargas != other.descargas)
             return false;
-        if (autores == null) {
-            if (other.autores != null)
-                return false;
-        } else if (!autores.equals(other.autores))
-            return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "LibroCont  [title= " + title + ", autor= " + autor +
+        return "LibroCont  [title= " + title  + ", autor" + autor +
                 ", categoria = " + categoria + ", idioma= " + idioma + ", descargas" + descargas;
     }
 }
