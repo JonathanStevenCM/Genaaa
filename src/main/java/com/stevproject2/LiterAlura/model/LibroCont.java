@@ -32,7 +32,13 @@ public class LibroCont {
     private Long UUID;
     @Column(unique = true)
     private String title;
-    @OneToMany(mappedBy = "libros", cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "libro_autor",
+        joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "UUID"),
+        inverseJoinColumns = @JoinColumn(name = "autor_id", referencedColumnName = "UUID")
+    )
     private List<Person> autor ;
     @Enumerated(EnumType.STRING)
     private Categoria categoria;;

@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,8 +29,8 @@ public class Person {
     private Integer fechaDeNacimiento;
     private Integer fechaDeSuMuerte;
 
-    @ManyToOne()
-    private LibroCont libros;
+    @ManyToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<LibroCont> libros;
 
 
     public Person(){}
@@ -46,11 +48,11 @@ public class Person {
 
 
 
-    public LibroCont getLibros() {
+    public List<LibroCont> getLibros() {
         return libros;
     }
 
-    public void setLibros(LibroCont libros) {
+    public void setLibros(List<LibroCont> libros) {
         this.libros = libros;
     }
 

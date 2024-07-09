@@ -10,24 +10,16 @@ import com.stevproject2.LiterAlura.model.LibroCont;
 import com.stevproject2.LiterAlura.model.Person;
 
 public interface LibroRepository extends JpaRepository<LibroCont, Long> {
-
-    // Buscar libro por título
-    @Query("SELECT l FROM LibroCont l WHERE l.title = :title")
-    List<LibroCont> findByTitle(@Param("title") String title);
-
-    // Listar todos los libros registrados
     @Query("SELECT l FROM LibroCont l")
-    List<LibroCont> findAllLibros();
+    List<LibroCont> findAllBooks();
 
-    // Listar todos los autores registrados
-    @Query("SELECT DISTINCT p FROM Person p")
-    List<Person> findAllAutores();
+    @Query("SELECT DISTINCT p FROM Person p LEFT JOIN FETCH p.libros")
+    List<Person> findAllAuthors();
 
-    // Listar autores vivos en un determinado año
-    @Query("SELECT DISTINCT p FROM Person p WHERE p.fechaDeNacimiento <= :year AND (p.fechaDeSuMuerte IS NULL OR p.fechaDeSuMuerte >= :year)")
-    List<Person> findAutoresVivosEnAnio(@Param("year") Integer year);
+    @Query("SELECT p FROM Person p WHERE (p.fechaDeNacimiento <= :year) AND (p.fechaDeSuMuerte >= :year OR p.fechaDeSuMuerte IS NULL)")
+    List<Person> findLivingAuthorsByYear(@Param("year") int year);
 
-    // Listar libros por idioma
-    @Query("SELECT l FROM LibroCont l JOIN l.idioma i WHERE i = :idioma")
-    List<LibroCont> findByIdioma(@Param("idioma") String idioma);
+    @Query("SELECT l FROM LibroCont l JOIN l.idioma i WHERE i IN :idiomas")
+    List<LibroCont> findBooksByLanguages(@Param("idiomas") List<String> idiomas);
+    
 }

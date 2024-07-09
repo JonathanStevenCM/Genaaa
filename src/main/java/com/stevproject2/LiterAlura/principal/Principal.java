@@ -2,11 +2,14 @@ package com.stevproject2.LiterAlura.principal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.stevproject2.LiterAlura.model.DatosLibro1;
 import com.stevproject2.LiterAlura.model.DatosLibroCont;
@@ -93,7 +96,8 @@ public class Principal {
         }
 
         private void buscarLibroPorTítulo() {
-            DatosLibro1 datos = getDatosLibro1();
+            try {
+                DatosLibro1 datos = getDatosLibro1();
             List<DatosLibro1> datosLibros = new ArrayList<>();
             datosLibros.add(datos);
             System.out.println(datosLibros);
@@ -118,61 +122,82 @@ public class Principal {
             System.out.println("Categoria: " + libroCont3.getCategoria());
             System.out.println("Descargas: " + libroCont3.getDescargas());
             System.out.println("--------------------------------");
+                
+            } catch (InputMismatchException e) {
+                System.out.println("Error: " + e.getMessage());
+                Principal principal= new Principal(repositorio);
+                principal.muestraElMenu();
+            } catch(DataIntegrityViolationException e){
+                System.out.println("Error: " + e.getMessage());
+                System.out.println("El libro se repetido,");
+                Principal principal= new Principal(repositorio);
+                principal.muestraElMenu();
+            }
+            
         }
 
         private void listarLibrosRegistrados() {
-            List<LibroCont> libros = repositorio.findAllLibros();
-            libros.forEach(libro -> {
-                System.out.println("--------------------------------");
-                System.out.println("Título: " + libro.getTitle());
-                System.out.println("Autor: " + libro.getAutor().stream().map(Person::getAutor).collect(Collectors.joining(", ")));
-                System.out.println("Categoria: " + libro.getCategoria());
-                System.out.println("Idioma: " + String.join(", ", libro.getIdioma()));
-                System.out.println("Descargas: " + libro.getDescargas());
-                System.out.println("--------------------------------");
-            });
+            List<LibroCont> libros = repositorio.findAllBooks();
+            for (LibroCont libro : libros) {
+                List<String> idiomas = libro.getIdioma();
+                for (Person autor : libro.getAutor()) {
+                    System.out.println("Nombre del libro: " + libro.getTitle());
+                    System.out.println("Nombre del autor: " + autor.getAutor());
+                    System.out.println("Idioma: " + idiomas);
+                    System.out.println("Cantidad de descargas: " + libro.getDescargas());
+                    System.out.println("--------------------------------");
+                }
+            }
+            
         }
 
         private void listarAutoresRegistrados() {
-            List<Person> autores = repositorio.findAllAutores();
-            autores.forEach(autor -> {
-                System.out.println("--------------------------------");
+            List<Person> autores = repositorio.findAllAuthors();
+            for (Person autor : autores) {
                 System.out.println("Autor: " + autor.getAutor());
-                System.out.println("Fecha de Nacimiento: " + autor.getFechaDeNacimiento());
-                System.out.println("Fecha de Muerte: " + (autor.getFechaDeSuMuerte() != null ? autor.getFechaDeSuMuerte() : "N/A"));
+                System.out.println("Fecha de nacimiento: " + autor.getFechaDeNacimiento());
+                System.out.println("Fecha de muerte: " + autor.getFechaDeSuMuerte());
+                System.out.println("Libros escritos:");
+                for (LibroCont libro : autor.getLibros()) {
+                    System.out.println("- " + libro.getTitle());
+                }
                 System.out.println("--------------------------------");
-            });
+            }
         }
 
         private void listarAutoresVivosEnUnDeterminadoAño() {
-            System.out.println("Ingrese el año: ");
-            var year = teclado.nextInt();
+            System.out.println("Ingrese el año:");
+            int year = teclado.nextInt();
             teclado.nextLine();
-            List<Person> autores = repositorio.findAutoresVivosEnAnio(year);
-            autores.forEach(autor -> {
+        
+            List<Person> autores = repositorio.findLivingAuthorsByYear(year);
+            for (Person autor : autores) {
+                System.out.println("Nombre del autor: " + autor.getAutor());
+                System.out.println("Fecha de nacimiento: " + autor.getFechaDeNacimiento());
+                System.out.println("Fecha de muerte: " + autor.getFechaDeSuMuerte());
+                System.out.println("Libros escritos:");
+                for (LibroCont libro : autor.getLibros()) {
+                    System.out.println("- " + libro.getTitle());
+                }
                 System.out.println("--------------------------------");
-                System.out.println("Autor: " + autor.getAutor());
-                System.out.println("Fecha de Nacimiento: " + autor.getFechaDeNacimiento());
-                System.out.println("Fecha de Muerte: " + (autor.getFechaDeSuMuerte() != null ? autor.getFechaDeSuMuerte() : "N/A"));
-                System.out.println("--------------------------------");
-            });
+            }
         }
 
         private void listarLibrosPorIdioma() {
-            System.out.println("Ingrese el idioma: ");
-            System.out.println("es");
-            System.out.println("en");
-            var idioma = teclado.nextLine();
-            List<LibroCont> libros = repositorio.findByIdioma(idioma);
-            libros.forEach(libro -> {
-                System.out.println("--------------------------------");
-                System.out.println("Título: " + libro.getTitle());
-                System.out.println("Autor: " + libro.getAutor().stream().map(Person::getAutor).collect(Collectors.joining(", ")));
-                System.out.println("Categoria: " + libro.getCategoria());
-                System.out.println("Idioma: " + String.join(", ", libro.getIdioma()));
-                System.out.println("Descargas: " + libro.getDescargas());
-                System.out.println("--------------------------------");
-            });
+            System.out.println("Ingrese los idiomas (separados por comas, por ejemplo: es,en):");
+            String input = teclado.nextLine();
+            List<String> idiomas = List.of(input.split(","));
+            
+            List<LibroCont> libros = repositorio.findBooksByLanguages(idiomas);
+            for (LibroCont libro : libros) {
+                for (Person autor : libro.getAutor()) {
+                    System.out.println("Nombre del título: " + libro.getTitle());
+                    System.out.println("Nombre del autor: " + autor.getAutor());
+                    System.out.println("Idioma del libro: " + libro.getIdioma());
+                    System.out.println("Número de descargas: " + libro.getDescargas());
+                    System.out.println("--------------------------------");
+                }
+            }
         }
 
 }
