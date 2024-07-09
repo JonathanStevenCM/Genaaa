@@ -36,7 +36,8 @@ public class Principal {
         public Principal(){}
     
         public void muestraElMenu() {
-            var opcion = -1;
+            try {
+                var opcion = -1;
             while (opcion != 0) {
                 var menu = """
                         Elija la opción a través de su número:
@@ -45,7 +46,6 @@ public class Principal {
                         3- listar autores registrados
                         4- listar autores vivos en un determinado año
                         5- listar libros por idioma
-                        6- libros web
     
                         0 - salir
                         """;
@@ -55,6 +55,7 @@ public class Principal {
     
                 switch (opcion) {
                     case 1:
+                    
                         buscarLibroPorTítulo();
                         break;
                     case 2:
@@ -79,6 +80,13 @@ public class Principal {
                 }
             }
     
+                
+            }  catch (InputMismatchException e) {
+                System.out.println("No ingresaste una opcion, vuelva a intentar");
+                System.out.println("------------------------");
+                Principal principal = new Principal(repositorio);
+		        principal.muestraElMenu();
+            }
         }
 
         
@@ -101,40 +109,42 @@ public class Principal {
         private void buscarLibroPorTítulo() {
             try {
                 DatosLibro1 datos = getDatosLibro1();
-            List<DatosLibro1> datosLibros = new ArrayList<>();
-            datosLibros.add(datos);
-            System.out.println(datosLibros);
-            //Transformando a lista de libro
-            List<Libro1> libro = new ArrayList<>();
-            libro = datosLibros.stream().map(d -> new Libro1(d)).collect(Collectors.toList());
-            //Transformando a un Libro
-            List<LibroCont> libroCont = new ArrayList<>();
-            libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont(l)).collect(Collectors.toList());
-            Optional<LibroCont> libroCont2 = libroCont.stream().map(l -> new LibroCont(l.getId(), l.getTitle(), l.getAutor(), l.getCategoria(), l.getIdioma(), l.getDescargas())).findFirst();
-            LibroCont libroCont3 = libroCont2.orElse(new LibroCont());
-            //Extrayendo el nombre del autor transformando el listado de autor a una persona.
-            List<Person> person0=  libroCont3.getAutor();
-            Optional<Person> person = person0.stream().map(l -> new Person(l.getAutor(),l.getFechaDeNacimiento(),l.getFechaDeSuMuerte())).findFirst();
-            Person person2 = person.orElse(new Person());
-            
-            repositorio.save(libroCont3);
-
-            System.out.println("--------------------------------");
-            System.out.println("Título: " + libroCont3.getTitle());
-            System.out.println("Autor: " + person2.getAutor());
-            System.out.println("Categoria: " + libroCont3.getCategoria());
-            System.out.println("Descargas: " + libroCont3.getDescargas());
-            System.out.println("--------------------------------");
+                List<DatosLibro1> datosLibros = new ArrayList<>();
+                datosLibros.add(datos);
+                System.out.println(datosLibros);
+                //Transformando a lista de libro
+                List<Libro1> libro = new ArrayList<>();
+                libro = datosLibros.stream().map(d -> new Libro1(d)).collect(Collectors.toList());
+                //Transformando a un Libro
+                List<LibroCont> libroCont = new ArrayList<>();
+                libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont(l)).collect(Collectors.toList());
+                Optional<LibroCont> libroCont2 = libroCont.stream().map(l -> new LibroCont(l.getId(), l.getTitle(), l.getAutor(), l.getCategoria(), l.getIdioma(), l.getDescargas())).findFirst();
+                LibroCont libroCont3 = libroCont2.orElse(new LibroCont());
+                //Extrayendo el nombre del autor transformando el listado de autor a una persona.
+                List<Person> person0=  libroCont3.getAutor();
+                Optional<Person> person = person0.stream().map(l -> new Person(l.getAutor(),l.getFechaDeNacimiento(),l.getFechaDeSuMuerte())).findFirst();
+                Person person2 = person.orElse(new Person());
                 
-            } catch (InputMismatchException e) {
-                System.out.println("Error: " + e.getMessage());
-                Principal principal= new Principal(repositorio);
-                principal.muestraElMenu();
+                repositorio.save(libroCont3);
+
+                System.out.println("--------------------------------");
+                System.out.println("Título: " + libroCont3.getTitle());
+                System.out.println("Autor: " + person2.getAutor());
+                System.out.println("Categoria: " + libroCont3.getCategoria());
+                System.out.println("Descargas: " + libroCont3.getDescargas());
+                System.out.println("--------------------------------");
+            
             } catch(DataIntegrityViolationException e){
-                System.out.println("Error: " + e.getMessage());
-                System.out.println("El libro se repetido,");
-                Principal principal= new Principal(repositorio);
-                principal.muestraElMenu();
+                System.out.println("-------------------------------------");
+                System.out.println("El libro se repetido, vuelva a intentar");
+                System.out.println("-------------------------------------");
+                buscarLibroPorTítulo();
+            } catch(NullPointerException e){
+                System.out.println("-------------------------------------");
+                System.out.println("El libro no existe, vuelva a intentarlo");
+                System.out.println("-------------------------------------");
+                buscarLibroPorTítulo();
+
             }
             
         }
