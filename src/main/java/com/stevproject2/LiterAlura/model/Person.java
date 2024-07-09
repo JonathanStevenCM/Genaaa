@@ -25,7 +25,7 @@ public class Person {
     private Long UUID;
     private String autor;
     private Integer fechaDeNacimiento;
-    private String fechaDeSuMuerte;
+    private Integer fechaDeSuMuerte;
 
     @ManyToOne()
     private LibroCont libros;
@@ -33,7 +33,7 @@ public class Person {
 
     public Person(){}
     
-    public Person(String autor, Integer fechaDeNacimiento, String fechaDeSuMuerte){
+    public Person(String autor, Integer fechaDeNacimiento, Integer fechaDeSuMuerte){
         this.autor = autor;
         this.fechaDeNacimiento = fechaDeNacimiento;
         this.fechaDeSuMuerte = fechaDeSuMuerte;
@@ -84,11 +84,11 @@ public class Person {
         this.fechaDeNacimiento = fechaDeNacimiento;
     }
 
-    public String getFechaDeSuMuerte() {
+    public Integer getFechaDeSuMuerte() {
         return fechaDeSuMuerte;
     }
 
-    public void setFechaDeSuMuerte(String fechaDeSuMuerte) {
+    public void setFechaDeSuMuerte(Integer fechaDeSuMuerte) {
         this.fechaDeSuMuerte = fechaDeSuMuerte;
     }
 

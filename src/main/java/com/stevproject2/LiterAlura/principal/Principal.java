@@ -97,37 +97,82 @@ public class Principal {
             List<DatosLibro1> datosLibros = new ArrayList<>();
             datosLibros.add(datos);
             System.out.println(datosLibros);
+            //Transformando a lista de libro
             List<Libro1> libro = new ArrayList<>();
             libro = datosLibros.stream().map(d -> new Libro1(d)).collect(Collectors.toList());
-            System.out.println(libro);
+            //Transformando a un Libro
             List<LibroCont> libroCont = new ArrayList<>();
-            libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont()).collect(Collectors.toList());
-            System.out.println(libroCont);
+            libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont(l)).collect(Collectors.toList());
             Optional<LibroCont> libroCont2 = libroCont.stream().map(l -> new LibroCont(l.getId(), l.getTitle(), l.getAutor(), l.getCategoria(), l.getIdioma(), l.getDescargas())).findFirst();
-            System.out.println(libroCont2);
             LibroCont libroCont3 = libroCont2.orElse(new LibroCont());
-            System.out.println(libroCont3);
+            //Extrallendo el nombre del autor transformando el listado de autor a una persona.
+            List<Person> person0=  libroCont3.getAutor();
+            Optional<Person> person = person0.stream().map(l -> new Person(l.getAutor(),l.getFechaDeNacimiento(),l.getFechaDeSuMuerte())).findFirst();
+            Person person2 = person.orElse(new Person());
+            
             repositorio.save(libroCont3);
+
+            System.out.println("--------------------------------");
+            System.out.println("Título: " + libroCont3.getTitle());
+            System.out.println("Autor: " + person2.getAutor());
+            System.out.println("Categoria: " + libroCont3.getCategoria());
+            System.out.println("Descargas: " + libroCont3.getDescargas());
+            System.out.println("--------------------------------");
         }
 
         private void listarLibrosRegistrados() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'listarLibrosRegistrados'");
+            List<LibroCont> libros = repositorio.findAllLibros();
+            libros.forEach(libro -> {
+                System.out.println("--------------------------------");
+                System.out.println("Título: " + libro.getTitle());
+                System.out.println("Autor: " + libro.getAutor().stream().map(Person::getAutor).collect(Collectors.joining(", ")));
+                System.out.println("Categoria: " + libro.getCategoria());
+                System.out.println("Idioma: " + String.join(", ", libro.getIdioma()));
+                System.out.println("Descargas: " + libro.getDescargas());
+                System.out.println("--------------------------------");
+            });
         }
 
         private void listarAutoresRegistrados() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'listarAutoresRegistrados'");
+            List<Person> autores = repositorio.findAllAutores();
+            autores.forEach(autor -> {
+                System.out.println("--------------------------------");
+                System.out.println("Autor: " + autor.getAutor());
+                System.out.println("Fecha de Nacimiento: " + autor.getFechaDeNacimiento());
+                System.out.println("Fecha de Muerte: " + (autor.getFechaDeSuMuerte() != null ? autor.getFechaDeSuMuerte() : "N/A"));
+                System.out.println("--------------------------------");
+            });
         }
 
         private void listarAutoresVivosEnUnDeterminadoAño() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'listarAutoresVivosEnUnDeterminadoAño'");
+            System.out.println("Ingrese el año: ");
+            var year = teclado.nextInt();
+            teclado.nextLine();
+            List<Person> autores = repositorio.findAutoresVivosEnAnio(year);
+            autores.forEach(autor -> {
+                System.out.println("--------------------------------");
+                System.out.println("Autor: " + autor.getAutor());
+                System.out.println("Fecha de Nacimiento: " + autor.getFechaDeNacimiento());
+                System.out.println("Fecha de Muerte: " + (autor.getFechaDeSuMuerte() != null ? autor.getFechaDeSuMuerte() : "N/A"));
+                System.out.println("--------------------------------");
+            });
         }
 
         private void listarLibrosPorIdioma() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'listarLibrosPorIdioma'");
+            System.out.println("Ingrese el idioma: ");
+            System.out.println("es");
+            System.out.println("en");
+            var idioma = teclado.nextLine();
+            List<LibroCont> libros = repositorio.findByIdioma(idioma);
+            libros.forEach(libro -> {
+                System.out.println("--------------------------------");
+                System.out.println("Título: " + libro.getTitle());
+                System.out.println("Autor: " + libro.getAutor().stream().map(Person::getAutor).collect(Collectors.joining(", ")));
+                System.out.println("Categoria: " + libro.getCategoria());
+                System.out.println("Idioma: " + String.join(", ", libro.getIdioma()));
+                System.out.println("Descargas: " + libro.getDescargas());
+                System.out.println("--------------------------------");
+            });
         }
 
 }
