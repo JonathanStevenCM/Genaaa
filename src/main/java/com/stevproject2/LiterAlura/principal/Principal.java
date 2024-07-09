@@ -82,7 +82,7 @@ public class Principal {
     
                 
             }  catch (InputMismatchException e) {
-                System.out.println("No ingresaste una opcion, vuelva a intentar");
+                System.out.println("No ingresaste una opcion valida, vuelva a intentar");
                 System.out.println("------------------------");
                 Principal principal = new Principal(repositorio);
 		        principal.muestraElMenu();
