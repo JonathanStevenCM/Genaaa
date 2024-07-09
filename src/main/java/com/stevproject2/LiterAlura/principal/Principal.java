@@ -1,6 +1,7 @@
 package com.stevproject2.LiterAlura.principal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -63,7 +64,9 @@ public class Principal {
                         listarAutoresRegistrados();
                         break;
                     case 4:
+                    
                         listarAutoresVivosEnUnDeterminadoAño();
+                        
                         break;
                     case 5:
                         listarLibrosPorIdioma();
@@ -109,7 +112,7 @@ public class Principal {
             libroCont  =   libro.stream().flatMap(libro1 -> libro1.getResultado().stream()).map(l -> new LibroCont(l)).collect(Collectors.toList());
             Optional<LibroCont> libroCont2 = libroCont.stream().map(l -> new LibroCont(l.getId(), l.getTitle(), l.getAutor(), l.getCategoria(), l.getIdioma(), l.getDescargas())).findFirst();
             LibroCont libroCont3 = libroCont2.orElse(new LibroCont());
-            //Extrallendo el nombre del autor transformando el listado de autor a una persona.
+            //Extrayendo el nombre del autor transformando el listado de autor a una persona.
             List<Person> person0=  libroCont3.getAutor();
             Optional<Person> person = person0.stream().map(l -> new Person(l.getAutor(),l.getFechaDeNacimiento(),l.getFechaDeSuMuerte())).findFirst();
             Person person2 = person.orElse(new Person());
@@ -139,10 +142,10 @@ public class Principal {
         private void listarLibrosRegistrados() {
             List<LibroCont> libros = repositorio.findAllBooks();
             for (LibroCont libro : libros) {
-                List<String> idiomas = libro.getIdioma();
+                String idiomas = libro.getIdioma();
                 for (Person autor : libro.getAutor()) {
                     System.out.println("Nombre del libro: " + libro.getTitle());
-                    System.out.println("Nombre del autor: " + autor.getAutor());
+                    System.out.println("Autor: " + autor.getAutor());
                     System.out.println("Idioma: " + idiomas);
                     System.out.println("Cantidad de descargas: " + libro.getDescargas());
                     System.out.println("--------------------------------");
@@ -172,7 +175,7 @@ public class Principal {
         
             List<Person> autores = repositorio.findLivingAuthorsByYear(year);
             for (Person autor : autores) {
-                System.out.println("Nombre del autor: " + autor.getAutor());
+                System.out.println("Autor: " + autor.getAutor());
                 System.out.println("Fecha de nacimiento: " + autor.getFechaDeNacimiento());
                 System.out.println("Fecha de muerte: " + autor.getFechaDeSuMuerte());
                 System.out.println("Libros escritos:");
@@ -184,21 +187,23 @@ public class Principal {
         }
 
         private void listarLibrosPorIdioma() {
-            System.out.println("Ingrese los idiomas (separados por comas, por ejemplo: es,en):");
-            String input = teclado.nextLine();
-            List<String> idiomas = List.of(input.split(","));
-            
-            List<LibroCont> libros = repositorio.findBooksByLanguages(idiomas);
-            for (LibroCont libro : libros) {
-                for (Person autor : libro.getAutor()) {
-                    System.out.println("Nombre del título: " + libro.getTitle());
-                    System.out.println("Nombre del autor: " + autor.getAutor());
-                    System.out.println("Idioma del libro: " + libro.getIdioma());
-                    System.out.println("Número de descargas: " + libro.getDescargas());
-                    System.out.println("--------------------------------");
-                }
+            System.out.println("Ingrese los idiomas separados por comas (ej. es,en): ");
+            String idiomasInput = teclado.nextLine();
+            List<String> idiomas = Arrays.asList(idiomasInput.split(","));
+    
+            List<Object[]> resultados = repositorio.listarLibrosPorIdioma(idiomas);
+            System.out.println("Resultados de la búsqueda:");
+            for (Object[] resultado : resultados) {
+                System.out.println("Título: " + resultado[0]);
+                System.out.println("Autor: " + resultado[1]);
+                System.out.println("Idioma: " + resultado[2]);
+                System.out.println("Descargas: " + resultado[3]);
+                System.out.println("--------------------------------");
             }
         }
+    }
+        
+            
 
-}
+
 

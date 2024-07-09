@@ -19,7 +19,8 @@ public interface LibroRepository extends JpaRepository<LibroCont, Long> {
     @Query("SELECT p FROM Person p WHERE (p.fechaDeNacimiento <= :year) AND (p.fechaDeSuMuerte >= :year OR p.fechaDeSuMuerte IS NULL)")
     List<Person> findLivingAuthorsByYear(@Param("year") int year);
 
-    @Query("SELECT l FROM LibroCont l JOIN l.idioma i WHERE i IN :idiomas")
-    List<LibroCont> findBooksByLanguages(@Param("idiomas") List<String> idiomas);
+    @Query("SELECT l.title, p.autor, l.idioma, l.descargas FROM LibroCont l JOIN l.autor p WHERE l.idioma IN :idiomas")
+    List<Object[]> listarLibrosPorIdioma(@Param("idiomas") List<String> idiomas);
+
     
 }

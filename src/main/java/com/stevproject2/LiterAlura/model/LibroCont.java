@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,24 +42,19 @@ public class LibroCont {
     )
     private List<Person> autor ;
     @Enumerated(EnumType.STRING)
-    private Categoria categoria;;
-    private List<String> idioma;
+    private Categoria categoria;
+    private String idioma;
     private int descargas;
     
-    
-    // private List<Person> autores;
-
-    // public List<Person> getAutores() {
-    //     return autores;
-    // }
-
-    // public void setAutores(List<Person> autores) {
-    //     this.autores = autores;
-    // }
 
     public LibroCont(){}
+        // Método para convertir la lista de idiomas a una cadena
 
-    public LibroCont(Long UUID, String title, List<Person> autor, Categoria categoria, List<String> idioma, int descargas){
+    public String getIdiomasAsString(List<String> idioma) {
+        return String.join(", ", idioma);
+    }
+
+    public LibroCont(Long UUID, String title, List<Person> autor, Categoria categoria, String idioma, int descargas){
         this.UUID = UUID;
         this.title = title;
         this.autor = autor;
@@ -71,7 +67,7 @@ public class LibroCont {
         this.title = datosLibroCont.title();
         this.autor = PersonConversor.convertToPerson(datosLibroCont.autor());
         this.categoria = SubjectCategorizer.categorizeSubjects(datosLibroCont.categoria());
-        this.idioma = datosLibroCont.idioma();
+        this.idioma = String.join(", ", datosLibroCont.idioma());
         this.descargas = datosLibroCont.descargas();
     }
 
@@ -107,11 +103,11 @@ public class LibroCont {
         this.categoria = SubjectCategorizer.categorizeSubjects(categoria);
     }
 
-    public List<String> getIdioma() {
+    public String getIdioma() {
         return idioma;
     }
 
-    public void setIdioma(List<String> idioma) {
+    public void setIdioma(String idioma) {
         this.idioma = idioma;
     }
 
